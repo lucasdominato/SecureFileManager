@@ -68,7 +68,11 @@ The application will be available at `http://localhost:8080`.
 
 ## Endpoints Documentation
 
-API documentation is available through Swagger once the application is running. You can access it at `http://localhost:8080/swagger-ui.html`.
+Swagger UI is available to interact with the API endpoints. After starting the application, go to:
+
+[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+The Swagger UI allows you to test all API operations and review the documentation.
 
 ---
 
