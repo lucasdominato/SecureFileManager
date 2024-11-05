@@ -22,7 +22,6 @@ class EncryptionServiceTest {
     private static final String VALID_HMAC_KEY = Base64.getEncoder().encodeToString(new byte[32]);
     private static final String INVALID_AES_KEY = Base64.getEncoder().encodeToString(new byte[16]);
     private static final String INVALID_HMAC_KEY = Base64.getEncoder().encodeToString(new byte[16]);
-    private static final String TRANSFORMATION = "AES/CTR/NoPadding";
     private static final int IV_SIZE = 16;
 
     private EncryptionService encryptionService;
@@ -34,7 +33,7 @@ class EncryptionServiceTest {
 
     @Test
     void testEncryptStreamSuccess() throws GeneralSecurityException, IOException {
-        String testData = "Hello, Secure World!";
+        String testData = "Testing phrase for encryption";
         InputStream inputStream = new ByteArrayInputStream(testData.getBytes());
 
         InputStream encryptedStream = encryptionService.encryptStream(inputStream);
@@ -44,7 +43,7 @@ class EncryptionServiceTest {
 
     @Test
     void testDecryptStreamSuccess() throws GeneralSecurityException, IOException {
-        String testData = "Hello, Secure World!";
+        String testData = "Testing phrase for decryption";
         ByteArrayOutputStream encryptedOutputStream = new ByteArrayOutputStream();
 
         try (InputStream inputStream = new ByteArrayInputStream(testData.getBytes());
@@ -62,7 +61,7 @@ class EncryptionServiceTest {
 
     @Test
     void testDecryptStreamWithInvalidHmac() throws GeneralSecurityException, IOException {
-        String testData = "Hello, Secure World!";
+        String testData = "Testing phrase for Invalid HMAC";
         ByteArrayOutputStream encryptedOutputStream = new ByteArrayOutputStream();
 
         try (InputStream inputStream = new ByteArrayInputStream(testData.getBytes());
@@ -71,7 +70,7 @@ class EncryptionServiceTest {
         }
 
         byte[] encryptedData = encryptedOutputStream.toByteArray();
-        encryptedData[encryptedData.length - 1] ^= 1;  // Alter data to simulate invalid HMAC
+        encryptedData[encryptedData.length - 1] ^= 1;
 
         ByteArrayInputStream alteredInputStream = new ByteArrayInputStream(encryptedData);
         ByteArrayOutputStream decryptedOutputStream = new ByteArrayOutputStream();
@@ -96,7 +95,7 @@ class EncryptionServiceTest {
 
     @Test
     void testEncryptStreamWithLargeData() throws GeneralSecurityException, IOException {
-        byte[] largeData = new byte[1024 * 1024];  // 1MB of data
+        byte[] largeData = new byte[1024 * 1024];
         InputStream largeInputStream = new ByteArrayInputStream(largeData);
 
         InputStream encryptedStream = encryptionService.encryptStream(largeInputStream);
@@ -105,7 +104,7 @@ class EncryptionServiceTest {
     }
 
     @Test
-    void testDecryptStreamWithEmptyInput() throws GeneralSecurityException, IOException {
+    void testDecryptStreamWithEmptyInput() {
         byte[] emptyData = new byte[0];
         ByteArrayInputStream emptyInputStream = new ByteArrayInputStream(emptyData);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -114,8 +113,8 @@ class EncryptionServiceTest {
     }
 
     @Test
-    void testDecryptStreamWithInvalidIv() throws GeneralSecurityException, IOException {
-        ByteArrayInputStream invalidIvInputStream = new ByteArrayInputStream(new byte[IV_SIZE - 1]);  // Insufficient IV size
+    void testDecryptStreamWithInvalidIv() {
+        ByteArrayInputStream invalidIvInputStream = new ByteArrayInputStream(new byte[IV_SIZE - 1]);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         assertThrows(IOException.class, () -> encryptionService.decryptStream(invalidIvInputStream, outputStream));
